@@ -27,8 +27,9 @@ logger.info(f"RabbitMQ URL: {rabbitMQ_URL}")
 
 intents = discord.Intents.default()
 intents.message_content = True
-intents.voice_states = True 
 intents.guilds = True
+intents.voice_states = True
+
 bot = commands.Bot(command_prefix='!', intents=intents)  
 audio_lock = asyncio.Lock()
 
@@ -114,10 +115,10 @@ async def play_audio(guild, channel, filename):
         await voice_client.disconnect()
 
 async def setup_rabbitmq():
-    connection = await aio_pika.connect_robust(rabbitMQ_URL)
+    connection = await aio_pika.connect_robust(rabbitMQ_URL,)
     channel = await connection.channel()
     queue = await channel.declare_queue('audio_queue', durable=True)
-    
+
     async def process_message(message):
         try:
             async with message.process():

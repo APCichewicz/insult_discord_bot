@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine AS builder
+FROM --platform=linux/arm64 golang:1.21-alpine AS builder
 
 WORKDIR /app
 
@@ -11,21 +11,14 @@ COPY . .
 
 RUN go build -o tts_service main.go
 
-FROM alpine:latest
+FROM --platform=linux/arm64 alpine:latest
 
-RUN apk add --no-cache ca-certificates alsa-lib espeak espeak-dev
+RUN apk add --no-cache ca-certificates alsa-lib espeak espeak-dev ffmpeg alsa-lib-dev portaudio-dev
 
-WORKDIR /root/
+RUN mkdir -p /app
 
-COPY --from=builder /app/tts_service .
+COPY --from=builder /app/tts_service /app/tts_service
 
 RUN mkdir -p /shared/audio
 
-RUN apk add --no-cache ffmpeg
-RUN apk add --no-cache \
-    alsa-lib-dev \
-    portaudio-dev \
-    espeak \
-    espeak-dev
-
-CMD ["./tts_service"]
+CMD ["/app/tts_service"]

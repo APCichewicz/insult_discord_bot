@@ -302,8 +302,7 @@ class TftMatchWatcher:
                 
                 self.logger.info(f"Checking matches for {len(summoners)} summoners")
                 
-                matches_processed = 0
-                errors_count = 0
+
                 
                 for summoner in summoners:
                     summoner_name = summoner['summoner_name']
@@ -324,12 +323,10 @@ class TftMatchWatcher:
                             self.logger.info(f"New match found for {summoner_name}: {latest_match} (previous: {cached_match})")
                             match_details = self.get_match_details(latest_match)
                             self.publish_match(match_details, summoner_name, guild_id)
-                            matches_processed += 1
                         else:
                             self.logger.debug(f"No new matches for {summoner_name}")
                     
                     except Exception as e:
-                        errors_count += 1
                         self.logger.error(f"Error processing summoner {summoner_name}: {e}")
                         continue
                     
